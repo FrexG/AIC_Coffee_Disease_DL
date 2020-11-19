@@ -1,9 +1,13 @@
 ### Import dependencies and libraries
-from keras.applications.inception_v3 import InceptionV#
+from keras.applications.inception_v3 import InceptionV3
 from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
 import numpy as np
 import os
+
+### Preprocess the image, according to the requirement
+### of the pre-trained model
+### InceptionV3(GoogleNet) in this case
 
 class ImagePreprocessor:
     def __init__(self,path):
