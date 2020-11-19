@@ -1,5 +1,4 @@
 import os
-import cv2 as cv
 import pandas as pd
 import numpy as np
 
@@ -33,9 +32,38 @@ class DataPreprocessor:
 
                 sizeOfdataset_labels = len(self.dataset_labels)
                 dataBatch = int(sizeOfdataset_labels * 0.7) ## this will give the size of train labels
+                
+                self.train_label = []
+                self.test_label = []
+                
+                for i in range(0,1251):
+                    self.train_label.append(self.dataset_labels[i])
+    
+                for i in range(1500,2500):
+                    self.train_label.append(self.dataset_labels[i])
+    
 
-                self.train_label = np.array(self.dataset_labels[:dataBatch])
-                self.test_label = np.array(self.dataset_labels[dataBatch:])
+                for i in range(1251,1500):
+                    self.test_label.append(self.dataset_labels[i])
+    
+                for i in range(2500,2965):
+                    self.test_label.append(self.dataset_labels[i])
+                
+                self.train_label = np.array(self.train_label)
+                self.test_label = np.array(self.test_label)
+                
+                ## Create a test_label.csv and train_label.csv
+                
+                self.train_label_DF = pd.DataFrame(data=self.train_label,columns=["id","miner",
+                                                                                 "rust","phoma","cercospora",
+                                                                                 "spider_mite"])
+                
+                self.test_label_DF = pd.DataFrame(data=self.test_label,columns=["id","miner",
+                                                                                 "rust","phoma","cercospora",
+                                                                                 "spider_mite"])
+                self.test_label_DF.to_csv("test_label.csv",index=False)
+                self.train_label_DF.to_csv("train_label.csv",index=False)
+
 
             else:
                 raise FileNotFoundError("File Doesn't Exist!!")
@@ -49,30 +77,29 @@ class DataPreprocessor:
 
             for label in self.train_label:
 
-                if os.path.exists(f'{self.dataset_path}{label[0]}.jpg'):
+                if os.path.exists(f'{self.dataset_path}{int(label[0])}.jpg'):
                     # If the image exists, then copy it to the 'train_data' folder
-                    os.rename(f'{self.dataset_path}{label[0]}.jpg',f'{self.dataset_path}train_data/{label[0]}.jpg')
+                    os.rename(f'{self.dataset_path}{int(label[0])}.jpg',f'{self.dataset_path}train_data/{int(label[0])}.jpg')
                 else:
-                    print(f"{label[0]}.jpg doesn't exist")
+                    print(f"{int(label[0])}.jpg doesn't exist")
                     continue
 
             for label in self.test_label:
 
-                if os.path.exists(f'{self.dataset_path}{label[0]}.jpg'):
+                if os.path.exists(f'{self.dataset_path}{int(label[0])}.jpg'):
                     # If the image exists, then copy it to the 'test_data' folder
-                    os.rename(f'{self.dataset_path}{label[0]}.jpg',f'{self.dataset_path}test_data/{label[0]}.jpg')
+                    os.rename(f'{self.dataset_path}{int(label[0])}.jpg',f'{self.dataset_path}test_data/{int(label[0])}.jpg')
                 else:
                     print(f"{label[0]}.jpg doesn't exist")
                     continue
         else:
             raise FileNotFoundError(f"The path '{self.dataset_path}' doesn't exist!!")
 
-        return (self.train_label,self.test_label)
+        return None
 
-
+"""
 if __name__ == "__main__":
     datasetPath = '/media/frextm/FrexData2/BROCOLE/' ## Absolute Path of the dataset folder 
     preproccessing = DataPreprocessor(datasetPath)   ## Create instance of class DataPreprocessor(path)   
-    train_label,test_label = preproccessing.train_test_split() ## Unpack the tuple into two variables
-    train_label.shape
-    test_label.shape
+    preproccessing.train_test_split() ## Unpack the tuple into two variables
+""""   
