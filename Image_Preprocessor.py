@@ -53,4 +53,20 @@ class ImagePreprocessor:
         image = load_img(f'{path}/{imageName}',target_size = (299,299))
         ImgToArray = img_to_array(image)
         print(f'processing .... [{imageName}]')
-        return ImgToArray                  
+        return ImgToArray    
+    
+    def getTrainingLabel(self,fileName):
+        os.chdir(self.dataset_path)
+        if os.path.isfile(fileName):
+            train_label = np.array(pd.read_csv(fileName))
+            return train_label
+        else:
+            raise FileNotFoundError(f'file {fileName} not found!!')
+
+    def getTestingLabel(self,fileName):
+        os.chdir(self.dataset_path)
+        if os.path.isfile(fileName):
+            train_label = np.array(pd.read_csv(fileName))
+            return train_label  
+        else:
+            raise FileNotFoundError(f'file {fileName} not found!!')
