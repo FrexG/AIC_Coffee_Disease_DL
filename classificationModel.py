@@ -1,4 +1,4 @@
-from CoffeeDiseaseTrain import ImagePreprocessor
+from Image_Preprocessor import ImagePreprocessor
 import os
 import numpy as np
 from keras.applications.inception_v3 import InceptionV3
