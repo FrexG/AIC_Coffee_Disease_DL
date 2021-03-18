@@ -22,7 +22,6 @@ class Classify:
         self.modelPath = model_path
         self.contours = contours
         self.leafArea = leafArea
-        print("Here!!")
 
     def openImage(self):
         # Open original image
