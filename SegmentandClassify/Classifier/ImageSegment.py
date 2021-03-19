@@ -165,7 +165,7 @@ class ImageSegment:
         # Find the contours of the segmented disease spots
         leaf_image = cv.cvtColor(leaf_image, cv.COLOR_BGR2RGB)
         contours, hierarchy = cv.findContours(
-            mask, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+            mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
         classifier = Classify(contours, self.leafArea,
                               self.image_path, self.model_path)
