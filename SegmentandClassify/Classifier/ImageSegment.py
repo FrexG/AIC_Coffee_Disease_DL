@@ -69,12 +69,12 @@ class ImageSegment:
     def image_correction(self, hsv_image, leaf_image, leafArea):
         # Histogram Equalize the 'V' channel of the hsv image
         hsv_image_equ = hsv_image.copy()
-        V_channel = hsv_image_equ[:, :, 2]
+        #V_channel = hsv_image_equ[:, :, 2]
 
-        V_channel_equalized = cv.equalizeHist(V_channel)
+        #V_channel_equalized = cv.equalizeHist(V_channel)
 
         # Repalace by the equalized V channel
-        hsv_image_equ[:, :, 2] = V_channel_equalized
+        #hsv_image_equ[:, :, 2] = V_channel_equalized
         # Convert to RGB
 
         rgb_image_equ = cv.cvtColor(hsv_image_equ, cv.COLOR_HSV2RGB)
