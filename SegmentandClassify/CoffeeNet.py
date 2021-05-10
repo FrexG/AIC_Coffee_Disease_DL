@@ -1,24 +1,34 @@
 from Classifier.ImageSegment import ImageSegment
+import os
 
 
 class CoffeeNet:
     # Path to saved model
-    model_path = '/home/frexg/Downloads/CoffeeNet_V2-20201228T083108Z-001/CoffeeNet_V2'
-    image_path = '/home/frexg/Keras_Practice/img/8.jpg'
+    model_path = '/home/frexg/Keras_Practice/models/CoffeeNet_V2_MobileNet'
 
-    def getImagePath(self):
+    def getImagePath(self, image_path, filename):
         # get path of image file
-        return self.image_path
+        return os.path.join(image_path, filename)
 
     def getModelPath(self):
         # get path of model
         return self.model_path
 
-    def classifyImage(self):
+    def classifyImage(self, imagepath, filename):
         # Start Image Segmentation
-        ImageSegment(self.getImagePath(), self.getModelPath())
+        ImageSegment(self.getImagePath(
+            imagepath, filename), self.getModelPath(), filename)
+
+    def evaluate(self):
+        pass
 
 
 if __name__ == "__main__":
+    image_path = '/home/frexg/Downloads/lara2018-master/segmentation/dataset/images/test'
     c = CoffeeNet()
-    c.classifyImage()
+    if os.path.exists(image_path):
+        for dirpath, dirname, filenames in os.walk(image_path):
+            for ImageFile in filenames:
+                c.classifyImage(image_path, ImageFile)
+    else:
+        print("Incorrent path")

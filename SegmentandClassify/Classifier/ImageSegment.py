@@ -8,29 +8,34 @@
 
 import cv2 as cv
 import numpy as np
+import matplotlib.pyplot as plt
 import math
 from Classifier.Classify import Classify
+from Classifier.EvaluateSegment import Evaluator
 
 
 class ImageSegment:
     image_path = ''  # Image path variable
     leafArea = None  # Total leaf Area
+    fileName = None
 
-    def __init__(self, image_path, model_path):
+    def __init__(self, image_path, model_path, filename):
         self.image_path = image_path  # load image path
         self.model_path = model_path  # load saved deep learning model path
-
+        self.fileName = filename
         self.currentMeanArray = []      # Empty array to hold the calculated Mean,
         self.currentVarianceArray = []  # Variance and
         self.areaUnderArray = []        # area under the mean-variance line
-
-        print(self.image_path)
         self.readImage(self.image_path)  # read image
+
+        return
 
     def readImage(self, image_path):
         leaf_image = cv.imread(image_path)
 
         self.remove_background(leaf_image)
+
+        return
 
         # OpenCV reads all images in BGR color space by default
 
@@ -66,6 +71,8 @@ class ImageSegment:
 
         self.image_correction(background_extracted, leaf_image, self.leafArea)
 
+        return
+
     def image_correction(self, hsv_image, leaf_image, leafArea):
         # Histogram Equalize the 'V' channel of the hsv image
         hsv_image_equ = hsv_image.copy()
@@ -80,6 +87,8 @@ class ImageSegment:
         rgb_image_equ = cv.cvtColor(hsv_image_equ, cv.COLOR_HSV2RGB)
 
         self.color_segment(hsv_image_equ, rgb_image_equ, leaf_image, leafArea)
+
+        return
 
     def color_segment(self, hsv_space, rgb_space, leaf_image, leafArea, lowerB=(36, 0, 0), upperB=(65, 255, 255), count=2):
         # extracted in the HSV color space
@@ -112,6 +121,7 @@ class ImageSegment:
         o_rgb = cv.bitwise_and(output_rgb, output_rgb, mask=mask)
 
         self.thresh_mask(o_rgb, leaf_image, leafArea)
+        return
 
     def findLowerBound(self, intensityArray):
 
@@ -158,9 +168,11 @@ class ImageSegment:
         kernel = np.ones((9, 9))
 
         thresh = cv.morphologyEx(thresh, cv.MORPH_CLOSE, kernel)
+        Evaluator(thresh, self.fileName)
+        plt.imshow(thresh, cmap="gray")
+        plt.show()
 
-        self.find_contours(thresh, out, leaf_image, leafArea)
-
+        #self.find_contours(thresh, out, leaf_image, leafArea)
     def find_contours(self, mask, img, leaf_image, leafArea):
         # Find the contours of the segmented disease spots
         leaf_image = cv.cvtColor(leaf_image, cv.COLOR_BGR2RGB)
