@@ -10,6 +10,7 @@ import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import time
 from Classifier.Classify import Classify
 from Classifier.EvaluateSegment import Evaluator
 
@@ -18,6 +19,8 @@ class ImageSegment:
     image_path = ''  # Image path variable
     leafArea = None  # Total leaf Area
     fileName = None
+    start_time = None
+    stop_time = None
 
     def __init__(self, image_path, model_path, filename):
         self.image_path = image_path  # load image path
@@ -31,6 +34,8 @@ class ImageSegment:
         return
 
     def readImage(self, image_path):
+        self.start_time = time.time()
+
         leaf_image = cv.imread(image_path)
 
         self.remove_background(leaf_image)
@@ -42,7 +47,7 @@ class ImageSegment:
     def remove_background(self, leaf_image):
 
         # Gaussian blur image to remove noise
-        blured = cv.GaussianBlur(leaf_image, (3, 3), 0)
+        blured = cv.GaussianBlur(leaf_image, (1, 1), 0)
 
         # Convert blured Image from BGR to HSV
         hsv_leaf = cv.cvtColor(blured, cv.COLOR_BGR2HSV)
@@ -52,9 +57,11 @@ class ImageSegment:
         SV_channel[:, :, 0] = np.zeros(
             (SV_channel.shape[0], SV_channel.shape[1]))  # Set the 'H' channel to Zero
 
+        SV_channel[:, :, 2] = np.zeros(
+            (SV_channel.shape[0], SV_channel.shape[1]))
         # Create a binary mask from the SV Channel
 
-        mask = cv.inRange(SV_channel, (0, 0, 80), (0, 90, 255))
+        mask = cv.inRange(SV_channel, (0, 0, 0), (0, 110, 0))
         # Invert mask, White areas represent green components and black the background
         mask = cv.bitwise_not(mask)
 
@@ -74,19 +81,10 @@ class ImageSegment:
         return
 
     def image_correction(self, hsv_image, leaf_image, leafArea):
-        # Histogram Equalize the 'V' channel of the hsv image
-        hsv_image_equ = hsv_image.copy()
-        #V_channel = hsv_image_equ[:, :, 2]
 
-        #V_channel_equalized = cv.equalizeHist(V_channel)
+        rgb_image_equ = cv.cvtColor(hsv_image, cv.COLOR_HSV2RGB)
 
-        # Repalace by the equalized V channel
-        #hsv_image_equ[:, :, 2] = V_channel_equalized
-        # Convert to RGB
-
-        rgb_image_equ = cv.cvtColor(hsv_image_equ, cv.COLOR_HSV2RGB)
-
-        self.color_segment(hsv_image_equ, rgb_image_equ, leaf_image, leafArea)
+        self.color_segment(hsv_image, rgb_image_equ, leaf_image, leafArea)
 
         return
 
@@ -121,6 +119,7 @@ class ImageSegment:
         o_rgb = cv.bitwise_and(output_rgb, output_rgb, mask=mask)
 
         self.thresh_mask(o_rgb, leaf_image, leafArea)
+
         return
 
     def findLowerBound(self, intensityArray):
@@ -165,14 +164,16 @@ class ImageSegment:
             mask, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
 
         # Morphological close operation
-        kernel = np.ones((9, 9))
+        kernel = np.ones((3, 3))
 
         thresh = cv.morphologyEx(thresh, cv.MORPH_CLOSE, kernel)
-        Evaluator(thresh, self.fileName)
-        plt.imshow(thresh, cmap="gray")
-        plt.show()
+        time_taken = time.time() - self.start_time
+        # print(time_taken)
+
+        Evaluator(thresh, self.fileName, time_taken)
 
         #self.find_contours(thresh, out, leaf_image, leafArea)
+
     def find_contours(self, mask, img, leaf_image, leafArea):
         # Find the contours of the segmented disease spots
         leaf_image = cv.cvtColor(leaf_image, cv.COLOR_BGR2RGB)
