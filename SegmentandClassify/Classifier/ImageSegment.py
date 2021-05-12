@@ -105,7 +105,7 @@ class ImageSegment:
         # This step ensures the black(intensity 0 - 2) pixel values
         # from the mean calculation.
         nonZeroIntentsity = nonZeroIntentsity[nonZeroIntentsity > 3]
-        nonZeroIntentsity = nonZeroIntentsity[nonZeroIntentsity < 66]
+        nonZeroIntentsity = nonZeroIntentsity[nonZeroIntentsity < 255]
 
         l = self.findLowerBound(nonZeroIntentsity)
         # Update the lower bound value of the 'H' channel accordingly
@@ -161,15 +161,17 @@ class ImageSegment:
         mask = cv.cvtColor(out, cv.COLOR_RGB2GRAY)
         # Calculate the otsu threshold
         ret, thresh = cv.threshold(
-            mask, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+            mask, 0, 55, cv.THRESH_BINARY + cv.THRESH_OTSU)
 
         # Morphological close operation
         kernel = np.ones((3, 3))
 
         thresh = cv.morphologyEx(thresh, cv.MORPH_CLOSE, kernel)
+
         time_taken = time.time() - self.start_time
         # print(time_taken)
-
+        plt.imshow(thresh, cmap="gray")
+        plt.show()
         Evaluator(thresh, self.fileName, time_taken)
 
         #self.find_contours(thresh, out, leaf_image, leafArea)

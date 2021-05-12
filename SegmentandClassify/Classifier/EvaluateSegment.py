@@ -33,7 +33,7 @@ class Evaluator:
 
         print(IoU)
 
-        f = open(self.csv_file, "a")
+        """ f = open(self.csv_file, "a")
         f.write('\n')
         f.write(self.imageName)
         f.write(',')
@@ -41,3 +41,4 @@ class Evaluator:
         f.write(',')
         f.write(f'{self.time_taken}')
         f.close()
+ """
