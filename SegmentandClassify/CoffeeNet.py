@@ -1,4 +1,5 @@
 from Classifier.ImageSegment import ImageSegment
+from Classifier.ycgcr import YCGCR
 import os
 
 
@@ -16,11 +17,11 @@ class CoffeeNet:
 
     def classifyImage(self, imagepath, filename):
         # Start Image Segmentation
+        # print("IoU HSV")q
         ImageSegment(self.getImagePath(
             imagepath, filename), self.getModelPath(), filename)
-
-    def evaluate(self):
-        pass
+        #print("IoU YCgCr")
+        #YCGCR(filename, image=self.getImagePath(image_path, filename))
 
 
 if __name__ == "__main__":

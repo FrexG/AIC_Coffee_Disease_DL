@@ -40,5 +40,4 @@ class Evaluator:
         f.write(f'{IoU}')
         f.write(',')
         f.write(f'{self.time_taken}')
-        f.close()
- """
+        f.close() """

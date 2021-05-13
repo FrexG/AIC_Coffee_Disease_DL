@@ -61,7 +61,7 @@ class ImageSegment:
             (SV_channel.shape[0], SV_channel.shape[1]))
         # Create a binary mask from the SV Channel
 
-        mask = cv.inRange(SV_channel, (0, 0, 0), (0, 110, 0))
+        mask = cv.inRange(SV_channel, (0, 0, 0), (0, 90, 0))
         # Invert mask, White areas represent green components and black the background
         mask = cv.bitwise_not(mask)
 
@@ -70,15 +70,14 @@ class ImageSegment:
         background_extracted = cv.bitwise_and(hsv_leaf, hsv_leaf, mask=mask)
 
         # calculate the contour area to find the total area of the leaf
-        contours, heirarchy = cv.findContours(
+        """ contours, heirarchy = cv.findContours(
             mask, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
         largestContour = max(contours, key=cv.contourArea)
 
-        self.leafArea = int(cv.contourArea(largestContour))
+        self.leafArea = int(cv.contourArea(largestContour)) """
 
-        self.image_correction(background_extracted, leaf_image, self.leafArea)
-
-        return
+        #self.image_correction(background_extracted, leaf_image, self.leafArea)
+        self.color_segment(background_extracted)
 
     def image_correction(self, hsv_image, leaf_image, leafArea):
 
@@ -86,9 +85,7 @@ class ImageSegment:
 
         self.color_segment(hsv_image, rgb_image_equ, leaf_image, leafArea)
 
-        return
-
-    def color_segment(self, hsv_space, rgb_space, leaf_image, leafArea, lowerB=(36, 0, 0), upperB=(65, 255, 255), count=2):
+    def color_segment(self, hsv_space, lowerB=(36, 0, 0), upperB=(65, 255, 255), count=2):
         # extracted in the HSV color space
 
         # create binary mask using the bounds
@@ -118,9 +115,7 @@ class ImageSegment:
         # bitwise_and mask and rgb image
         o_rgb = cv.bitwise_and(output_rgb, output_rgb, mask=mask)
 
-        self.thresh_mask(o_rgb, leaf_image, leafArea)
-
-        return
+        self.thresh_mask(o_rgb, leafArea)
 
     def findLowerBound(self, intensityArray):
 
@@ -164,14 +159,13 @@ class ImageSegment:
             mask, 0, 55, cv.THRESH_BINARY + cv.THRESH_OTSU)
 
         # Morphological close operation
-        kernel = np.ones((3, 3))
+        kernel = np.ones((6, 6))
 
         thresh = cv.morphologyEx(thresh, cv.MORPH_CLOSE, kernel)
 
         time_taken = time.time() - self.start_time
         # print(time_taken)
-        plt.imshow(thresh, cmap="gray")
-        plt.show()
+
         Evaluator(thresh, self.fileName, time_taken)
 
         #self.find_contours(thresh, out, leaf_image, leafArea)
