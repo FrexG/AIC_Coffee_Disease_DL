@@ -9,7 +9,7 @@ from Classifier.ImageSegment import ImageSegment
 class CoffeeNet:
     # Path to saved model
     model_path = '/home/frexg/Keras_Practice/models/CoffeeNet_V2_MobileNet'
-    test_image_directory = '/home/frexg/Downloads/lara2018-master/segmentation/dataset/train_binary'
+    test_image_directory = '/home/frexg/Downloads/lara2018-master/segmentation/dataset/validation_binary'
 
     def getImagePath(self, image_path, filename):
         # get path of image file
@@ -34,7 +34,7 @@ class CoffeeNet:
         KThresh, KTime, Kacc = KMEANS(filename, image=self.getImagePath(
             image_path, filename)).getThresh()
 
-        fig, axs = plt.subplot()
+        fig, axs = plt.subplots(2, 3)
         axs[0][0].imshow(inp)
         axs[0][0].set_title("Input")
 
@@ -56,7 +56,7 @@ class CoffeeNet:
 
 
 if __name__ == "__main__":
-    image_path = '/home/frexg/Downloads/lara2018-master/segmentation/dataset/images/test'
+    image_path = '/home/frexg/Downloads/lara2018-master/segmentation/dataset/images/val'
     # image_path = '/home/frexg/Documents/Artificial Intelligence Center/BROCOLE/Cropped_dataset/test_data/a'
 
     c = CoffeeNet()

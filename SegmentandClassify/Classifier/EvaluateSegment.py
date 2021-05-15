@@ -5,7 +5,7 @@ import os
 
 
 class Evaluator:
-    test_image_directory = '/home/frexg/Downloads/lara2018-master/segmentation/dataset/train_binary'
+    test_image_directory = '/home/frexg/Downloads/lara2018-master/segmentation/dataset/validation_binary'
     test_image_path = None
     segmented_image = None
     imageName = None
