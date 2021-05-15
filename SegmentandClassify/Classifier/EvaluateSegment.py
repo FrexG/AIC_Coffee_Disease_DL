@@ -41,12 +41,8 @@ class Evaluator:
         f.write(f'{IoU}')
         f.write(',')
         f.write(f'{self.time_taken}')
-<<<<<<< Updated upstream
         f.close()
  """
-=======
-        f.close() """
 
     def getAccuracy(self):
         return self.accuracy
->>>>>>> Stashed changes

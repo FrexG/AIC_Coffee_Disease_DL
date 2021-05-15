@@ -1,12 +1,9 @@
-from Classifier.ImageSegment import ImageSegment
-<<<<<<< Updated upstream
-=======
-from Classifier.ycgcr import YCGCR
-from Classifier.k_means import KMEANS
-import matplotlib.pyplot as plt
->>>>>>> Stashed changes
-import os
 import cv2 as cv
+import os
+import matplotlib.pyplot as plt
+from Classifier.k_means import KMEANS
+from Classifier.ycgcr import YCGCR
+from Classifier.ImageSegment import ImageSegment
 
 
 class CoffeeNet:
@@ -24,14 +21,6 @@ class CoffeeNet:
 
     def classifyImage(self, imagepath, filename):
         # Start Image Segmentation
-<<<<<<< Updated upstream
-        ImageSegment(self.getImagePath(
-            imagepath, filename), self.getModelPath(), filename)
-
-    def evaluate(self):
-        pass
-=======
-        # print("IoU HSV")q
         imageName = filename.split('.')[0]
         ground_truth = cv.imread(os.path.join(
             self.test_image_directory, f'{imageName}_mask.png'))
@@ -45,9 +34,7 @@ class CoffeeNet:
         KThresh, KTime, Kacc = KMEANS(filename, image=self.getImagePath(
             image_path, filename)).getThresh()
 
-        plt.imshow(inp)
-
-        """ fig, axs = plt.subplot()
+        fig, axs = plt.subplot()
         axs[0][0].imshow(inp)
         axs[0][0].set_title("Input")
 
@@ -64,9 +51,8 @@ class CoffeeNet:
 
         axs[1][1].imshow(YThresh, cmap="gray")
         axs[1][1].set_title(
-            f"k-means | time:{round(KTime,3)}s | acc:{round(Kacc,3)}") """
+            f"k-means | time:{round(KTime,3)}s | acc:{round(Kacc,3)}")
         plt.show()
->>>>>>> Stashed changes
 
 
 if __name__ == "__main__":

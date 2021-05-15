@@ -63,11 +63,8 @@ class ImageSegment:
         #    (SV_channel.shape[0], SV_channel.shape[1]))
         # Create a binary mask from the SV Channel
 
-<<<<<<< Updated upstream
-        mask = cv.inRange(SV_channel, (0, 0, 0), (0, 110, 0))
-=======
         mask = cv.inRange(SV_channel, (0, 0, 80), (0, 90, 255))
->>>>>>> Stashed changes
+
         # Invert mask, White areas represent green components and black the background
         mask = cv.bitwise_not(mask)
 
@@ -77,32 +74,9 @@ class ImageSegment:
         #    hsv_leaf[:, :, 1], 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
         background_extracted = cv.bitwise_and(hsv_leaf, hsv_leaf, mask=mask)
 
-<<<<<<< Updated upstream
-        # calculate the contour area to find the total area of the leaf
-        contours, heirarchy = cv.findContours(
-            mask, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-        largestContour = max(contours, key=cv.contourArea)
-
-        self.leafArea = int(cv.contourArea(largestContour))
-
-        self.image_correction(background_extracted, leaf_image, self.leafArea)
-
-        return
-
-    def image_correction(self, hsv_image, leaf_image, leafArea):
-
-        rgb_image_equ = cv.cvtColor(hsv_image, cv.COLOR_HSV2RGB)
-
-        self.color_segment(hsv_image, rgb_image_equ, leaf_image, leafArea)
-
-        return
-
-    def color_segment(self, hsv_space, rgb_space, leaf_image, leafArea, lowerB=(36, 0, 0), upperB=(65, 255, 255), count=2):
-=======
         self.color_segment(background_extracted)
 
     def color_segment(self, hsv_space, lowerB=(36, 0, 0), upperB=(65, 255, 255), count=2):
->>>>>>> Stashed changes
         # extracted in the HSV color space
         self.start_time = time.time()
         # create binary mask using the bounds
@@ -130,14 +104,8 @@ class ImageSegment:
 
         # bitwise_and mask and rgb image
 
-<<<<<<< Updated upstream
-        self.thresh_mask(o_rgb, leaf_image, leafArea)
-
-        return
-=======
         o_hsv = cv.bitwise_and(output_hsv, output_hsv, mask=mask)
         self.thresh_mask(o_hsv)
->>>>>>> Stashed changes
 
     def findLowerBound(self, intensityArray):
 
@@ -189,15 +157,9 @@ class ImageSegment:
 
         self.stop_time = time.time() - self.start_time
         # print(time_taken)
-<<<<<<< Updated upstream
-        plt.imshow(thresh, cmap="gray")
-        plt.show()
-        Evaluator(thresh, self.fileName, time_taken)
-=======
 
         self.acc = Evaluator(thresh, self.fileName,
                              self.stop_time).getAccuracy()
->>>>>>> Stashed changes
 
         #self.find_contours(thresh, out, leaf_image, leafArea)
     def getThresh(self):
