@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+import matplotlib.pyplot as plt
 import os
 
 
@@ -8,6 +9,7 @@ class Evaluator:
     test_image_path = None
     segmented_image = None
     imageName = None
+    accuracy = None
     time_taken = 0
     csv_file = "./evaluation_results.csv"
 
@@ -22,8 +24,7 @@ class Evaluator:
         return
 
     def IntersectionOverUnion(self):
-        test_image = cv.imread(self.test_image_path)
-        test_image = cv.cvtColor(test_image, cv.COLOR_BGR2GRAY)
+        test_image = cv.imread(self.test_image_path, cv.IMREAD_GRAYSCALE)
         # print(test_image.shape)
 
         Intersection = np.logical_and(test_image, self.segmented_image)
@@ -31,14 +32,21 @@ class Evaluator:
 
         IoU = np.sum(Intersection) / np.sum(Union)
 
-        print(IoU)
-
-        """ f = open(self.csv_file, "a")
-        f.write('\n')
+        self.accuracy = IoU
+        """ 
+        f = open(self.csv_file, "a")
+        f.write('n')
         f.write(self.imageName)
         f.write(',')
         f.write(f'{IoU}')
         f.write(',')
         f.write(f'{self.time_taken}')
+<<<<<<< Updated upstream
         f.close()
  """
+=======
+        f.close() """
+
+    def getAccuracy(self):
+        return self.accuracy
+>>>>>>> Stashed changes

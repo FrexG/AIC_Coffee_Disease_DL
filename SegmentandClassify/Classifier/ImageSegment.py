@@ -21,6 +21,9 @@ class ImageSegment:
     fileName = None
     start_time = None
     stop_time = None
+    final_thresh = None
+    bg_subtracted = None
+    acc = None
 
     def __init__(self, image_path, model_path, filename):
         self.image_path = image_path  # load image path
@@ -29,18 +32,14 @@ class ImageSegment:
         self.currentMeanArray = []      # Empty array to hold the calculated Mean,
         self.currentVarianceArray = []  # Variance and
         self.areaUnderArray = []        # area under the mean-variance line
+
         self.readImage(self.image_path)  # read image
 
-        return
-
     def readImage(self, image_path):
-        self.start_time = time.time()
 
         leaf_image = cv.imread(image_path)
 
         self.remove_background(leaf_image)
-
-        return
 
         # OpenCV reads all images in BGR color space by default
 
@@ -48,6 +47,9 @@ class ImageSegment:
 
         # Gaussian blur image to remove noise
         blured = cv.GaussianBlur(leaf_image, (1, 1), 0)
+
+        self.bg_subtracted = cv.cvtColor(
+            blured, cv.COLOR_BGR2RGB)
 
         # Convert blured Image from BGR to HSV
         hsv_leaf = cv.cvtColor(blured, cv.COLOR_BGR2HSV)
@@ -57,18 +59,25 @@ class ImageSegment:
         SV_channel[:, :, 0] = np.zeros(
             (SV_channel.shape[0], SV_channel.shape[1]))  # Set the 'H' channel to Zero
 
-        SV_channel[:, :, 2] = np.zeros(
-            (SV_channel.shape[0], SV_channel.shape[1]))
+        # SV_channel[:, :, 2] = np.zeros(
+        #    (SV_channel.shape[0], SV_channel.shape[1]))
         # Create a binary mask from the SV Channel
 
+<<<<<<< Updated upstream
         mask = cv.inRange(SV_channel, (0, 0, 0), (0, 110, 0))
+=======
+        mask = cv.inRange(SV_channel, (0, 0, 80), (0, 90, 255))
+>>>>>>> Stashed changes
         # Invert mask, White areas represent green components and black the background
         mask = cv.bitwise_not(mask)
 
         # perform bitwise_and between mask and hsv image
 
+        # ret, mask = cv.threshold(
+        #    hsv_leaf[:, :, 1], 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
         background_extracted = cv.bitwise_and(hsv_leaf, hsv_leaf, mask=mask)
 
+<<<<<<< Updated upstream
         # calculate the contour area to find the total area of the leaf
         contours, heirarchy = cv.findContours(
             mask, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
@@ -89,15 +98,19 @@ class ImageSegment:
         return
 
     def color_segment(self, hsv_space, rgb_space, leaf_image, leafArea, lowerB=(36, 0, 0), upperB=(65, 255, 255), count=2):
-        # extracted in the HSV color space
+=======
+        self.color_segment(background_extracted)
 
+    def color_segment(self, hsv_space, lowerB=(36, 0, 0), upperB=(65, 255, 255), count=2):
+>>>>>>> Stashed changes
+        # extracted in the HSV color space
+        self.start_time = time.time()
         # create binary mask using the bounds
         mask = cv.inRange(hsv_space, lowerB, upperB)
         mask = cv.bitwise_not(mask)
 
         # bitwise_and mask and rgb image
         output_hsv = cv.bitwise_and(hsv_space, hsv_space, mask=mask)
-        output_rgb = cv.bitwise_and(rgb_space, rgb_space, mask=mask)
 
         nonZeroIntentsity = output_hsv[:, :, 0].copy()
 
@@ -116,11 +129,15 @@ class ImageSegment:
         mask = cv.bitwise_not(mask)
 
         # bitwise_and mask and rgb image
-        o_rgb = cv.bitwise_and(output_rgb, output_rgb, mask=mask)
 
+<<<<<<< Updated upstream
         self.thresh_mask(o_rgb, leaf_image, leafArea)
 
         return
+=======
+        o_hsv = cv.bitwise_and(output_hsv, output_hsv, mask=mask)
+        self.thresh_mask(o_hsv)
+>>>>>>> Stashed changes
 
     def findLowerBound(self, intensityArray):
 
@@ -157,8 +174,8 @@ class ImageSegment:
             lowerBound = self.findLowerBound(nonZeroIntentsity)
             return lowerBound
 
-    def thresh_mask(self, out, leaf_image, leafArea):
-        mask = cv.cvtColor(out, cv.COLOR_RGB2GRAY)
+    def thresh_mask(self, out):
+        mask = out[:, :, 2]
         # Calculate the otsu threshold
         ret, thresh = cv.threshold(
             mask, 0, 55, cv.THRESH_BINARY + cv.THRESH_OTSU)
@@ -168,13 +185,23 @@ class ImageSegment:
 
         thresh = cv.morphologyEx(thresh, cv.MORPH_CLOSE, kernel)
 
-        time_taken = time.time() - self.start_time
+        self.final_thresh = thresh
+
+        self.stop_time = time.time() - self.start_time
         # print(time_taken)
+<<<<<<< Updated upstream
         plt.imshow(thresh, cmap="gray")
         plt.show()
         Evaluator(thresh, self.fileName, time_taken)
+=======
+
+        self.acc = Evaluator(thresh, self.fileName,
+                             self.stop_time).getAccuracy()
+>>>>>>> Stashed changes
 
         #self.find_contours(thresh, out, leaf_image, leafArea)
+    def getThresh(self):
+        return (self.final_thresh, self.bg_subtracted, self.stop_time, self.acc)
 
     def find_contours(self, mask, img, leaf_image, leafArea):
         # Find the contours of the segmented disease spots

@@ -1,10 +1,18 @@
 from Classifier.ImageSegment import ImageSegment
+<<<<<<< Updated upstream
+=======
+from Classifier.ycgcr import YCGCR
+from Classifier.k_means import KMEANS
+import matplotlib.pyplot as plt
+>>>>>>> Stashed changes
 import os
+import cv2 as cv
 
 
 class CoffeeNet:
     # Path to saved model
     model_path = '/home/frexg/Keras_Practice/models/CoffeeNet_V2_MobileNet'
+    test_image_directory = '/home/frexg/Downloads/lara2018-master/segmentation/dataset/train_binary'
 
     def getImagePath(self, image_path, filename):
         # get path of image file
@@ -16,19 +24,59 @@ class CoffeeNet:
 
     def classifyImage(self, imagepath, filename):
         # Start Image Segmentation
+<<<<<<< Updated upstream
         ImageSegment(self.getImagePath(
             imagepath, filename), self.getModelPath(), filename)
 
     def evaluate(self):
         pass
+=======
+        # print("IoU HSV")q
+        imageName = filename.split('.')[0]
+        ground_truth = cv.imread(os.path.join(
+            self.test_image_directory, f'{imageName}_mask.png'))
+
+        HThresh, inp, HTime, Hacc = ImageSegment(self.getImagePath(
+            imagepath, filename), self.getModelPath(), filename).getThresh()
+
+        # print("IoU YCgCr")
+        YThresh, YTime, Yacc = YCGCR(filename, image=self.getImagePath(
+            image_path, filename)).getThresh()
+        KThresh, KTime, Kacc = KMEANS(filename, image=self.getImagePath(
+            image_path, filename)).getThresh()
+
+        plt.imshow(inp)
+
+        """ fig, axs = plt.subplot()
+        axs[0][0].imshow(inp)
+        axs[0][0].set_title("Input")
+
+        axs[0][1].imshow(ground_truth, cmap="gray")
+        axs[0][1].set_title("Ground Truth")
+
+        axs[0][2].imshow(HThresh, cmap="gray")
+        axs[0][2].set_title(
+            f"Robust HSV | time:{round(HTime,3)}s | acc:{round(Hacc,3)}")
+
+        axs[1][0].imshow(YThresh, cmap="gray")
+        axs[1][0].set_title(
+            f"YCgCr | time:{round(YTime,3)}s | acc:{round(Yacc,3)}")
+
+        axs[1][1].imshow(YThresh, cmap="gray")
+        axs[1][1].set_title(
+            f"k-means | time:{round(KTime,3)}s | acc:{round(Kacc,3)}") """
+        plt.show()
+>>>>>>> Stashed changes
 
 
 if __name__ == "__main__":
     image_path = '/home/frexg/Downloads/lara2018-master/segmentation/dataset/images/test'
+    # image_path = '/home/frexg/Documents/Artificial Intelligence Center/BROCOLE/Cropped_dataset/test_data/a'
+
     c = CoffeeNet()
     if os.path.exists(image_path):
         for dirpath, dirname, filenames in os.walk(image_path):
             for ImageFile in filenames:
                 c.classifyImage(image_path, ImageFile)
     else:
-        print("Incorrent path")
+        print("Incorrect path")
