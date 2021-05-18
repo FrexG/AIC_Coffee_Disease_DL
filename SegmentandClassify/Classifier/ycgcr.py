@@ -17,13 +17,13 @@ class YCGCR:
         image_path = image["image"]
         bgr_image = cv.imread(image_path)
         self.remove_background(bgr_image)
+
     def remove_background(self, leaf_image):
 
         # Gaussian blur image to remove noise
         blured = cv.GaussianBlur(leaf_image, (1, 1), 0)
 
-        self.bg_subtracted = cv.cvtColor(
-            blured, cv.COLOR_BGR2RGB)
+        self.bg_subtracted = cv.cvtColor(blured, cv.COLOR_BGR2RGB)
 
         # Convert blured Image from BGR to HSV
         hsv_leaf = cv.cvtColor(blured, cv.COLOR_BGR2HSV)
@@ -75,6 +75,8 @@ class YCGCR:
         self.stop_time = time.time() - self.start_time
 
         self.finalThresh = g2
+
+        g2 = np.uint8(g2 * 255)
 
         self.acc = Evaluator(g2, self.fileName, self.stop_time).getAccuracy()
 

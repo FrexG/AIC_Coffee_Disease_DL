@@ -80,6 +80,8 @@ class KMEANS:
         ret, res2 = cv.threshold(
             res2, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
 
+        #res2 = cv.bitwise_not(res2)
+
         self.finalThresh = res2
 
         self.stop_time = time.time() - self.start_time

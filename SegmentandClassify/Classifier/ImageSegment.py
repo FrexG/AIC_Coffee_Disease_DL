@@ -152,6 +152,7 @@ class ImageSegment:
         kernel = np.ones((3, 3))
 
         thresh = cv.morphologyEx(thresh, cv.MORPH_CLOSE, kernel)
+        #thresh = cv.bitwise_not(thresh)
 
         self.final_thresh = thresh
 
