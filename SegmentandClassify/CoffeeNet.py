@@ -26,12 +26,15 @@ class CoffeeNet:
         ground_truth = cv.imread(os.path.join(
             self.test_image_directory, f'{imageName}_mask.png'))
 
+        ImageSegment(self.getImagePath(imagepath, filename),
+                     self.getModelPath(), filename)
+
         # HThresh, inp, HTime, Hacc = ImageSegment(self.getImagePath(
         #    imagepath, filename), self.getModelPath(), filename).getThresh()
 
         # print("IoU YCgCr")
-        YThresh, YTime, Yacc = YCGCR(filename, image=self.getImagePath(
-            image_path, filename)).getThresh()
+        # YThresh, YTime, Yacc = YCGCR(filename, image=self.getImagePath(
+        #    image_path, filename)).getThresh()
         # KThresh, KTime, Kacc = KMEANS(filename, image=self.getImagePath(
         #    image_path, filename)).getThresh()
 
@@ -78,13 +81,15 @@ class CoffeeNet:
 
 
 if __name__ == "__main__":
-    image_path = '/home/frexg/Downloads/lara2018-master/segmentation/dataset/images/test'
+    image_path = '/home/frexg/Downloads/lara2018-master/segmentation/dataset/images/test/'
     # image_path = '/home/frexg/Documents/Artificial Intelligence Center/BROCOLE/Cropped_dataset/test_data/a'
 
     c = CoffeeNet()
-    if os.path.exists(image_path):
+    c.classifyImage(image_path, "21.jpg")
+
+    """ if os.path.exists(image_path):
         for dirpath, dirname, filenames in os.walk(image_path):
             for ImageFile in filenames:
                 c.classifyImage(image_path, ImageFile)
     else:
-        print("Incorrect path")
+        print("Incorrect path") """

@@ -47,14 +47,17 @@ class Classify:
 
                 # if x + 400 <= img.shape[0] and y + 400 <= img.shape[1]:
                 input_image = leaf_image[y:y+h, x:x+w]
+
                 # else:
                 #    input_image = leaf_image[y:y+h, x:x+w]
 
                 input_image = cv.resize(
                     input_image, (self.IMAGE_WIDTH, self.IMAGE_HEIGHT))
+
                 input_image = input_image.reshape(-1,
                                                   self.IMAGE_WIDTH, self.IMAGE_HEIGHT, 3)
                 input_image = np.array(input_image)
+
                 input_image = ((input_image * 1./255) - 0.5) * 2
 
                 prediction = loaded_model.predict_classes(input_image)
@@ -73,5 +76,6 @@ class Classify:
                                  (val['x_cord'][1], val['y_cord'][1]), (5, 255, 10), 2)
                 cv.putText(r, diseases[val['prediction']],
                            (val['x_cord'][0], val['y_cord'][0] - 5), cv.FONT_HERSHEY_SIMPLEX, font_size, (255, 0, 0), 2)
-            plt.imshow(leaf_image)
+
+        plt.imshow(leaf_image)
         plt.show()

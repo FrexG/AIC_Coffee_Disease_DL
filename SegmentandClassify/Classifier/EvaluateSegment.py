@@ -57,7 +57,7 @@ class Evaluator:
         f.write('\n')
         f.write(self.imageName)
         f.write(',')
-        f.write(f'{IoU}')
+        f.write(f'{Fscore}')
         f.write(',')
         f.write(f'{self.time_taken}')
         f.close()

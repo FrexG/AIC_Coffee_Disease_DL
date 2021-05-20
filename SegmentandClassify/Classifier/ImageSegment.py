@@ -18,6 +18,7 @@ from Classifier.EvaluateSegment import Evaluator
 class ImageSegment:
     image_path = ''  # Image path variable
     leafArea = None  # Total leaf Area
+    leafImage = None
     fileName = None
     start_time = None
     stop_time = None
@@ -38,6 +39,10 @@ class ImageSegment:
     def readImage(self, image_path):
 
         leaf_image = cv.imread(image_path)
+        self.leafImage = leaf_image
+
+        plt.imshow(cv.cvtColor(leaf_image, cv.COLOR_BGR2RGB))
+        plt.show()
 
         self.remove_background(leaf_image)
 
@@ -68,11 +73,21 @@ class ImageSegment:
         # Invert mask, White areas represent green components and black the background
         mask = cv.bitwise_not(mask)
 
+        contours, heirarchy = cv.findContours(
+            mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+
+        largest_contour = max(contours, key=cv.contourArea)
+        x, y, w, h = cv.boundingRect(largest_contour)
+        self.leafArea = w * h
+
         # perform bitwise_and between mask and hsv image
 
         # ret, mask = cv.threshold(
         #    hsv_leaf[:, :, 1], 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
         background_extracted = cv.bitwise_and(hsv_leaf, hsv_leaf, mask=mask)
+
+        plt.imshow(cv.cvtColor(background_extracted, cv.COLOR_HSV2RGB))
+        plt.show()
 
         self.color_segment(background_extracted)
 
@@ -101,6 +116,9 @@ class ImageSegment:
 
         mask = cv.inRange(hsv_space, new_lowerB, upperB)
         mask = cv.bitwise_not(mask)
+
+        plt.imshow(mask, cmap="gray")
+        plt.show()
 
         # bitwise_and mask and rgb image
 
@@ -154,21 +172,24 @@ class ImageSegment:
         thresh = cv.morphologyEx(thresh, cv.MORPH_CLOSE, kernel)
         #thresh = cv.bitwise_not(thresh)
 
+        plt.imshow(thresh, cmap="gray")
+        plt.show()
+
         self.final_thresh = thresh
 
         self.stop_time = time.time() - self.start_time
         # print(time_taken)
 
-        self.acc = Evaluator(thresh, self.fileName,
-                             self.stop_time).getAccuracy()
+       # self.acc = Evaluator(thresh, self.fileName,
+        #                     self.stop_time).getAccuracy()
 
-        #self.find_contours(thresh, out, leaf_image, leafArea)
+        self.find_contours(thresh, out)
+
     def getThresh(self):
         return (self.final_thresh, self.bg_subtracted, self.stop_time, self.acc)
 
-    def find_contours(self, mask, img, leaf_image, leafArea):
+    def find_contours(self, mask, img):
         # Find the contours of the segmented disease spots
-        leaf_image = cv.cvtColor(leaf_image, cv.COLOR_BGR2RGB)
         contours, hierarchy = cv.findContours(
             mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
