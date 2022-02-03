@@ -1,7 +1,7 @@
 # CoffeeNet
 
 Source code for the proposed HSV image segmentation algorithm and MobileNetv2 classifier in the paper titled
-*** Coffee disease detection using a robust HSV color-based segmentation and transfer learning for use on smartphones *** 
+*Coffee disease detection using a robust HSV color-based segmentation and transfer learning for use on smartphones* 
 https://onlinelibrary.wiley.com/doi/full/10.1002/int.22747?__cf_chl_jschl_tk__=t305CSI2hIS1FiZd7Fnd5nfWlaFpNAwpemr61yT.Ud4-1641539749-0-gaNycGzNC30
 
 ## Abstract
