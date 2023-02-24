@@ -12,8 +12,8 @@ Ethiopia's coffee export accounts for about 34% of all exports for the budget ye
 
 HSV segmentation and pre-processing implementation is contained on
 
-```bash
-ImageSegment.py
+``` bash
+python ImageSegment.py
 ```
 
 ## Cite
